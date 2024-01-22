@@ -1,17 +1,15 @@
 # coding:utf-8
-import platform
-from PIL import Image
 from torch.utils.data import DataLoader
 from torchvision.datasets import ImageFolder
 from C.utils import *
 from C.configs import *
 from torchvision import transforms
-import re
 import torch
 
 def t_img(txt_list, model_name):
     gpus = [0, 1]
-    torch.cuda.set_device('cuda:{}'.format(gpus[0]))
+    if torch.cuda.is_available():
+        torch.cuda.set_device('cuda:{}'.format(gpus[0]))
     add_log('-' * 43 + '测试错误信息如下' + '-' * 43, txt_list)
     print()
     Train = TrainImg()

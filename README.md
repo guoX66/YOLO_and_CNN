@@ -1,7 +1,5 @@
 # YOLO 检测 + CNN分类
 
-
-
 ## 环境部署
 
 首先需安装 python>=3.10.2，然后将项目移至全英文路径下
@@ -64,12 +62,11 @@ python -c "import torch;print(torch.__version__);print(torch.version.cuda);print
 python -c "import tensorrt;print(tensorrt.__version__)"
 ```
 
-
-
 安装其他环境依赖
-    pip install -r requirements.txt
 
-
+```bash
+pip install -r requirements.txt
+```
 
 安装torch2trt
 
@@ -80,15 +77,11 @@ python setup.py install
 
 
 
-
-
-
-
 # 检测模型训练
 
 ## 数据集准备
 
-将标注好的数据集放到y_data/xml_data中，参考
+将标注好的数据集放到y_data/xml_data中，参考 [Rhierarch/simple_YOLO (github.com)](https://github.com/Rhierarch/simple_YOLO)
 
 ```
 --y_data
@@ -113,7 +106,7 @@ python y_label.py
 python y_train.py
 ```
 
-
+训练完后将自动导出onnx、openvino、tensorrt模型
 
 # 分类模型训练
 
@@ -123,10 +116,10 @@ python y_train.py
 python detect.py
 ```
 
-随后运行训练程序
+随后运行训练程序，模型可换为 googlenet，resnet18，resnet34，resnet50，resnet101, DenseNet121，DenseNet161，DenseNet201
 
 ```bash
-python c_train.py --model googlenet
+python c_train.py --model googlenet --is_divide True --epochs 20
 ```
 
 或双进程训练

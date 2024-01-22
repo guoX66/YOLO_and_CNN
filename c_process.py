@@ -1,7 +1,7 @@
 # coding:utf-8
-from train import train_process
-from configs import TrainImg
-from utils import divide_test
+from c_train import train_process
+from C.configs import TrainImg
+from C.utils import divide_test
 import multiprocessing
 
 Train = TrainImg()

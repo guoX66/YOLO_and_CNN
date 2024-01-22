@@ -5,7 +5,8 @@ import platform
 from torchvision import transforms
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--model', type=str, default='googlenet')
+parser.add_argument('--model', type=str, default='googlenet', choices=(
+'googlenet', 'resnet18', 'resnet34', 'resnet50', 'resnet101', 'DenseNet121', 'DenseNet161', 'DenseNet201'))
 parser.add_argument('--is_divide', type=bool, default=True)
 parser.add_argument('--epochs', type=int, default=20)
 parser.add_argument('--min_acc', type=float, default=99)

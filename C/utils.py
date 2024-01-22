@@ -282,7 +282,6 @@ def make_plot(data, mode, filename, epoch):
     figure(figsize=(12.8, 9.6))
     x = [i + 1 for i in range(epoch)]
     plt.plot(x, data)
-    plt.rcParams['font.sans-serif'] = ['SimHei']
     plt.rcParams['axes.unicode_minus'] = False
     plt.title(title + '-' + filename, fontsize=20)
     plt.xlabel('epoch', fontsize=20)

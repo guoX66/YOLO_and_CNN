@@ -1,5 +1,7 @@
 # coding:utf-8
 import platform
+import traceback
+import numpy as np
 from torch.utils.data import DataLoader
 from C.utils import *
 from C.configs import TrainImg, ModelInfo
@@ -8,6 +10,8 @@ from torchvision import transforms
 import shutil
 from torch.optim.lr_scheduler import StepLR
 import torch.distributed as dist
+import torch
+from torchvision.datasets import ImageFolder
 
 
 def train_model(model, Train, txt_list, modelinfo):
@@ -76,7 +80,6 @@ def train_model(model, Train, txt_list, modelinfo):
         start_time = time.perf_counter()
         for j, [imgs, targets] in enumerate(dataloader_train):
             if j == 1 and os_name != 'Windows':
-                 
                 # os.system("nvidia-smi")
                 pass
             imgs, targets = imgs.to(device), targets.to(device)
