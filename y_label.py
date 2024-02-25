@@ -144,6 +144,7 @@ def change_label_main():
 if __name__ == '__main__':
     change_label_main()
     path = 'log/y_class'
+    os.makedirs('log', exist_ok=True)
     json_str = json.dumps(class_dict)
     with open(f'{path}.json', 'w') as json_file:
         json_file.write(json_str)

@@ -1,5 +1,7 @@
 !*/
 /runs/
+/train_process/
+/log/
 **/__pycache__/
 **/.idea/
 *.jpg
@@ -8,4 +10,5 @@
 *.txt
 *.xml
 *.cache
+*.pth
 !requirements.txt

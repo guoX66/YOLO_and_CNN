@@ -5,8 +5,7 @@ import platform
 from torchvision import transforms
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--model', type=str, default='googlenet', choices=(
-'googlenet', 'resnet18', 'resnet34', 'resnet50', 'resnet101', 'DenseNet121', 'DenseNet161', 'DenseNet201'))
+parser.add_argument('--model', type=str, default='googlenet')
 parser.add_argument('--is_divide', type=bool, default=True)
 parser.add_argument('--epochs', type=int, default=20)
 parser.add_argument('--min_acc', type=float, default=99)
@@ -25,10 +24,10 @@ class ModelInfo:
 
 class TrainImg:
     def __init__(self):
-        self.train_path = 'data/static'  # 保存图片的文件名
+        self.train_path = 'c_data/static'  # 保存图片的文件名
         self.imgpath = self.train_path + '/train'
         self.is_divide = args.is_divide  # 设置训练开始前是否拆分测试集
-        self.data_path = 'data/database'  # 拆分前数据所在文件名
+        self.data_path = 'c_data/database'  # 拆分前数据所在文件名
         self.t_divide_present = 0.8  # 拆分测试集比例
         self.divide_present = 0.8  # 拆分验证集比例
         os_name = str(platform.system())
@@ -49,5 +48,5 @@ class TrainImg:
 class TestImg(TrainImg):
     def __init__(self):
         super().__init__()
-        self.imgpath = 'data/static/test'  # 保存测试图片的路径名
+        self.imgpath = 'c_data/static/test'  # 保存测试图片的路径名
         self.log_path = 'log-test'

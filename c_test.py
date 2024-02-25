@@ -18,7 +18,7 @@ def t_img(txt_list, model_name):
     print()
     Train = TrainImg()
     testimgs = TestImg()
-    with open("log/class_id.json", 'r', encoding='UTF-8') as f:
+    with open("log/c_class.json", 'r', encoding='UTF-8') as f:
         class_dict = json.load(f)
     class_dict = {int(k): class_dict[k] for k in class_dict.keys()}
 
