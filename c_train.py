@@ -3,18 +3,17 @@ import platform
 import traceback
 import numpy as np
 from torch.utils.data import DataLoader
+from torchvision.datasets import ImageFolder
 from C.utils import *
 from C.configs import TrainImg, ModelInfo
 from c_test import t_img
 from torchvision import transforms
 import shutil
 from torch.optim.lr_scheduler import StepLR
-import torch.distributed as dist
 import torch
-from torchvision.datasets import ImageFolder
 
 
-def train_model(model, Train, txt_list, modelinfo):
+def train_model(Train, txt_list, modelinfo):
     gpus = [0, 1]
     if torch.cuda.is_available():
         torch.cuda.set_device('cuda:{}'.format(gpus[0]))
@@ -30,6 +29,9 @@ def train_model(model, Train, txt_list, modelinfo):
     dataset_train = ImageFolder(Train.imgpath, transform=transform)  # 训练数据集
     class_to_id_dict = dataset_train.class_to_idx
     class_dict = {class_to_id_dict[k]: k for k in class_to_id_dict.keys()}
+    n_label = len(list(class_to_id_dict.keys()))
+    model = make_train_model(modelinfo, n_label)
+    show(Train, model, txt_list)
     write_json(class_dict, 'c_class')
     train_size = int(divide_present * len(dataset_train))
     val_size = len(dataset_train) - train_size
@@ -57,6 +59,9 @@ def train_model(model, Train, txt_list, modelinfo):
     print(f'使用的预训练模型为:{modelinfo.model}')
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+
+
+
     loss_fn = nn.CrossEntropyLoss().to(device)  # 优化器
     optimizer = torch.optim.Adam(model.parameters(), lr=learn_rate)  # 可调超参数
     scheduler = StepLR(optimizer, step_size=step_size, gamma=gamma)
@@ -80,6 +85,7 @@ def train_model(model, Train, txt_list, modelinfo):
         start_time = time.perf_counter()
         for j, [imgs, targets] in enumerate(dataloader_train):
             if j == 1 and os_name != 'Windows':
+                 
                 # os.system("nvidia-smi")
                 pass
             imgs, targets = imgs.to(device), targets.to(device)
@@ -131,12 +137,12 @@ def train_model(model, Train, txt_list, modelinfo):
                 add_log("根据正确率，已修改模型", train_txt)
                 best_acc = acc
                 ba_epoch = i + 1
-                torch.save(model, f'{model_name}.pth')
+                torch.save(model.state_dict(), f'{model_name}.pth')
             if total_val_loss < min_lost:
                 add_log("根据损失，已修改模型", train_txt)
                 ml_epoch = i + 1
                 min_lost = total_val_loss
-                torch.save(model, f'{model_name}.pth')
+                torch.save(model.state_dict(), f'{model_name}.pth')
 
     if Train.write_process:
         txt_list = txt_list + train_txt
@@ -168,17 +174,17 @@ def train_process(model=None):
     modelinfo = ModelInfo()
     if model is not None:
         modelinfo.model = model
-    model_ft = make_model(Train, modelinfo)
+
     min_acc = Train.min_acc
     txt_list = []
     st = time.time()
     num = 1
     add_log('*' * 40 + f' 训练开始，该训练以测试集正确率为停止条件，要求的正确率为{Train.min_acc}% ' + '*' * 40,
             txt_list)
-    show(Train, model_ft, txt_list)
+
     while True:
         add_log('*' * 60 + f"第{num}次训练开始" + '*' * 60, txt_list)
-        model_name, loss_list, acc_list, epoch, acc = train_model(model_ft, Train, txt_list, modelinfo)
+        model_name, loss_list, acc_list, epoch, acc = train_model(Train, txt_list, modelinfo)
         num += 1
         if acc > min_acc:
             add_log(40 * '*' + f'模型训练参数如下' + 40 * '*', txt_list)

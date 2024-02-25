@@ -1,4 +1,10 @@
+!*/
+/runs/
 **/__pycache__/
-data/*
-!data/.gitkeep
 **/.idea/
+*.jpg
+*.png
+*.jpeg
+/y_data/datasets/
+/y_data/i_datasets/
+/y_data/xml_data/

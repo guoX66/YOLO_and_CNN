@@ -2,6 +2,7 @@
 """
 该程序包含训练需要的函数
 """
+import torch
 import torch.nn as nn
 import torchvision.models as models
 import os
@@ -11,7 +12,8 @@ import time
 import random
 import shutil
 import json
-
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
 
 
 def divide_dataset(path, o_path, train_p, val_p):
@@ -145,17 +147,27 @@ def get_label_list(imgpath):
     return label_name_list, label_dict, label_list
 
 
-def make_model(Train, modelinfo):
-    _, label_list = get_labellist(Train)  # 通过调用img实例化对象函数获取标签列表及个数
-    label_len = len(label_list)
-
+def make_model(modelinfo, n, path, device):
     model_ft = sele_model(modelinfo)
     layer_list = get_layers_name(model_ft)
     last_layers_name = layer_list[-1][0]
     in_features = layer_list[-1][1].in_features
-    layer1 = nn.Linear(in_features, label_len)
+    layer1 = nn.Linear(in_features, n)
     _set_module(model_ft, last_layers_name, layer1)
+    model_ft.load_state_dict(
+        {k.replace('module.', ''): v for k, v in torch.load(path, map_location=device).items()})
+    if isinstance(model_ft, torch.nn.DataParallel):
+        model_ft = model_ft.module
+    return model_ft
 
+
+def make_train_model(modelinfo, n):
+    model_ft = sele_model(modelinfo, train=True)
+    layer_list = get_layers_name(model_ft)
+    last_layers_name = layer_list[-1][0]
+    in_features = layer_list[-1][1].in_features
+    layer1 = nn.Linear(in_features, n)
+    _set_module(model_ft, last_layers_name, layer1)
     return model_ft
 
 
@@ -220,7 +232,7 @@ def lock(model, start, end):
                 param[1].requires_grad = False
 
 
-def sele_model(Model):
+def sele_model(Model, train=False):
     model_dict = {
         'resnet18': models.resnet18(weights=models.ResNet18_Weights.DEFAULT),  # 残差网络
         'resnet34': models.resnet34(weights=models.ResNet34_Weights.DEFAULT),
@@ -232,7 +244,10 @@ def sele_model(Model):
         'DenseNet201': models.densenet201(weights=models.DenseNet201_Weights.DEFAULT),
 
     }
-    return model_dict[Model.model]
+    if train:
+        return model_dict[Model.model]
+    else:
+        return model_dict[Model]
 
 
 def get_labellist(c):

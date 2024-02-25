@@ -1,10 +1,14 @@
 # coding:utf-8
+import platform
+import torch
+from PIL import Image
+from C.utils import *
+from torchvision import transforms
+import re
+from C.configs import TrainImg, TestImg, ModelInfo
 from torch.utils.data import DataLoader
 from torchvision.datasets import ImageFolder
-from C.utils import *
-from C.configs import *
-from torchvision import transforms
-import torch
+
 
 def t_img(txt_list, model_name):
     gpus = [0, 1]
@@ -28,7 +32,9 @@ def t_img(txt_list, model_name):
     right_num = 0
     test_num = 0
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = torch.load(f'{model_name}.pth')
+    n_label = len(list(class_dict.keys()))
+    piece = model_name.split(('-'))
+    model = make_model(piece[1], n_label, model_name+'.pth', device)
     model.eval()
     os_name = str(platform.system())
     if os_name == 'Windows':

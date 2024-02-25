@@ -1,5 +1,5 @@
 names:
   0: worm
-path: D:\projects\PS/y_data/datasets
+path: D:\github_projects\YOLO_and_CNN/y_data/datasets
 train: train/images
 val: val/images
