@@ -5,4 +5,7 @@
 *.jpg
 *.png
 *.jpeg
-/y_data/
+*.txt
+*.xml
+*.cache
+!requirements.txt
