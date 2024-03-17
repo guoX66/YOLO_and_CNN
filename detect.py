@@ -5,7 +5,7 @@ import traceback
 import torch
 from ultralytics import YOLO
 import cv2
-from Y.y_config import Y_cfg
+from _utils.y_config import Y_cfg
 import time
 from multiprocessing import Process, Queue, Lock, Value
 
@@ -54,8 +54,8 @@ def detect_out(eq, sq, q, model, Y_cfg, lock, n, t_s, v, conf):
 
 
 if __name__ == '__main__':
-    in_path = 'c_data/i_database'
-    out_path = 'c_data/database'
+    in_path = 'data/c_data'
+    out_path = 'CNN_IC/data/static'
     model_path = Y_cfg['out_file']
 
     parser = argparse.ArgumentParser(description='choose model path')
@@ -72,9 +72,7 @@ if __name__ == '__main__':
     torch.multiprocessing.set_start_method('spawn')
     model_path = args.model
     model_path = model_path.replace('pt', args.model_type)
-
     model = YOLO(model_path)
-
     try:
         shutil.rmtree(out_path)
     except:

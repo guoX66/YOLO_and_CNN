@@ -1,7 +1,7 @@
 import shutil
 from ultralytics import YOLO
-from C.utils import divide_dataset
-from Y.y_config import Y_cfg, train_data, curpath, make_yaml
+from _utils.y_utils import divide_dataset
+from _utils.y_config import Y_cfg, train_data, curpath, make_yaml, args
 
 if __name__ == '__main__':
     make_yaml(curpath, train_data)
@@ -24,3 +24,9 @@ if __name__ == '__main__':
                           device=Y_cfg['device'],
                           amp=Y_cfg['AMP']
                           )
+    model = YOLO(f'runs/detect/{output_file}/weights/best.pt')  # load a custom trained model
+    # Export the model
+    if args.is_expo:
+        model.export(format='openvino')
+        model.export(format='onnx')
+        model.export(format='engine', half=True)

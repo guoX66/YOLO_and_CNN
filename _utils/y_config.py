@@ -5,7 +5,7 @@ import torch
 import argparse
 import yaml
 
-train_data = 'Y/mydata.yaml'
+train_data = '_utils/mydata.yaml'
 current_dir = os.path.dirname(os.path.realpath(__file__))
 curpath = os.path.dirname(current_dir)
 
@@ -13,7 +13,7 @@ os_name = str(platform.system())
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--is_divide', type=bool, default=False)
+parser.add_argument('--is_divide', type=bool, default=True)
 parser.add_argument('--model', type=str, default="yolomodel/yolov8n.pt")
 parser.add_argument('--divide_rate', type=str, default="8:2")
 parser.add_argument('--out_file', default=None)
@@ -21,7 +21,8 @@ parser.add_argument('--epochs', type=int, default=50)
 parser.add_argument('--batch', type=int, default=16)
 parser.add_argument('--imgsz', type=int, default=640)
 parser.add_argument('--conf', type=float, default=0.3)
-parser.add_argument('--amp', type=bool, default=False)
+parser.add_argument('--amp', type=bool, default=True)
+parser.add_argument('--is_expo', type=bool, default=True)
 args = parser.parse_args()
 
 model = args.model
@@ -41,10 +42,10 @@ else:
 
 Y_cfg = {
     'model': model,
-    'xml_path': f'{curpath}/y_data/xml_data',
+    'xml_path': f'{curpath}/data/xml_data',
     'is_divide': args.is_divide,
-    'divide_in': f'{curpath}/y_data/i_datasets',
-    'divide_out': f'{curpath}/y_data/datasets',
+    'divide_in': f'{curpath}/data/i_datasets',
+    'divide_out': f'{curpath}/data/datasets',
     'train_divide': args.divide_rate,
     'train_data': train_data,
     'out_file': args.out_file if args.out_file else file,
@@ -66,7 +67,7 @@ def make_yaml(curpath, train_data):
 
     desired_caps = {
 
-        'path': f'{curpath}/y_data/datasets',  # dataset root dir
+        'path': f'{curpath}/data/datasets',  # dataset root dir
         'train': 'train/images',
         'val': 'val/images',
         # Classes
